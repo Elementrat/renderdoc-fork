@@ -302,6 +302,25 @@ public:
         m_pDevice->SetResourceName(this, pStrData);
       }
     }
+    else if(guid == WKPDID_D3DDebugObjectNameW)
+    {
+      const wchar_t *pStrData = (const wchar_t *)pData;
+      if(DataSize != 0 && pStrData[DataSize / 2 - 1] != '\0')
+      {
+        char tmpBuf[1024] = {0};
+        size_t size;
+        wcstombs_s(&size, tmpBuf, pStrData, DataSize / 2);
+        std::string sName(tmpBuf, DataSize / 2);
+        m_pDevice->SetResourceName(this, sName.c_str());
+      }
+      else
+      {
+        char tmpBuf[1024] = {0};
+        size_t size;
+        wcstombs_s(&size, tmpBuf, pStrData, DataSize / 2);
+        m_pDevice->SetResourceName(this, tmpBuf);
+      }
+    }
 
     return m_pReal->SetPrivateData(guid, DataSize, pData);
   }
